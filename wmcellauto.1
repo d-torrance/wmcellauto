@@ -1,0 +1,43 @@
+.TH WMAUTOCELL "1" "March 2017"
+.SH NAME
+wmautocell \- Window Maker dockapp for displaying cellular automata
+.SH SYNOPSIS
+.B wmcellauto
+[\fI\,OPTIONS\/\fR]
+.SH OPTIONS
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+show this help text and exit
+.TP
+\fB\-v\fR, \fB\-\-version\fR
+show program version and exit
+.TP
+\fB\-w\fR, \fB\-\-windowed\fR
+run the application in windowed mode
+.TP
+\fB\-a\fR, \fB\-\-alivecolor\fR <string>
+color of live cells (default: light sea green)
+.TP
+\fB\-d\fR, \fB\-\-deadcolor\fR <string>
+color of dead cells (default: black)
+.TP
+\fB\-t\fR, \fB\-\-time\fR <number>
+time in ms between generations (default: 250)
+.TP
+\fB\-b\fR, \fB\-\-birth\fR <string>
+custom ruleset \- specify number of adjacent cells
+required for birth (default: 3)
+.TP
+\fB\-s\fR, \fB\-\-survival\fR <string>
+custom ruleset \- specify number of adjacent cells
+required for survival (default: 23)
+.TP
+\fB\-r\fR, \fB\-\-ruleset\fR <string>
+select ruleset (life (default), 2x2, day & night,
+flock, fredkin, highlife, life without death,
+live free or die, maze, mazectric, move,
+replicator, seeds)
+.TP
+\fB\-\-density\fR <number>
+percentage of live cells in initial random grid
+(default: 50)
