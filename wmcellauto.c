@@ -1,4 +1,4 @@
-/* wmcellauto - Window Maker dockapp for displaying cellular automaton
+/* wmcellauto - Window Maker dockapp for displaying cellular automata
  * Copyright (C) 2017 Doug Torrance <dtorrance@piedmont.edu>
  *
  * This program is free software; you can redistribute it and/or
@@ -96,7 +96,7 @@ int main(int argc, char **argv)
 
 	DAParseArguments(argc, argv, options, 4,
 			 "Window Maker dockapp for displaying cellular "
-			 "automaton",
+			 "automata",
 			 PACKAGE_STRING);
 	DAInitialize(NULL, PACKAGE_NAME, DOCKAPP_WIDTH, DOCKAPP_HEIGHT,
 		     argc, argv);
