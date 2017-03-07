@@ -29,6 +29,7 @@
 #define DOCKAPP_HEIGHT CELL_HEIGHT * GRID_HEIGHT
 #define DEFAULT_ALIVE_COLOR "light sea green"
 #define DEFAULT_DEAD_COLOR "black"
+#define DEFAULT_GENERATION_TIME 250
 
 enum {
 	BS_ZERO = 1 << 0,
@@ -52,6 +53,8 @@ int survival_mask = DEFAULT_SURVIVAL_MASK;
 
 char *alive_color = DEFAULT_ALIVE_COLOR;
 char *dead_color = DEFAULT_DEAD_COLOR;
+int generation_time = DEFAULT_GENERATION_TIME;
+
 Pixmap pixmap;
 GC alive_gc;
 GC dead_gc;
@@ -69,7 +72,10 @@ int main(int argc, char **argv)
 		 DOString, False, {&alive_color}},
 		{"-d", "--deadcolor",
 		 "color of dead cells (default: black)",
-		 DOString, False, {&dead_color}}
+		 DOString, False, {&dead_color}},
+		{"-t", "--time",
+		 "time in ms between generations (default: 250)",
+		 DONatural, False, {&generation_time}}
 	};
 
 	srand(time(NULL));
@@ -79,7 +85,7 @@ int main(int argc, char **argv)
 				      NULL, NULL, NULL, NULL,
 				      increment_gen};
 
-	DAParseArguments(argc, argv, options, 2,
+	DAParseArguments(argc, argv, options, 3,
 			 "Window Maker dockapp for displaying cellular "
 			 "automaton",
 			 PACKAGE_STRING);
@@ -97,7 +103,7 @@ int main(int argc, char **argv)
 
 	randomize_grid(0, 0, 0, 0);
 
-	DASetTimeout(250);
+	DASetTimeout(generation_time);
 	DAShow();
 	DAEventLoop();
 
