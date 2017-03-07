@@ -56,6 +56,7 @@ char *alive_color = DEFAULT_ALIVE_COLOR;
 char *dead_color = DEFAULT_DEAD_COLOR;
 int generation_time = DEFAULT_GENERATION_TIME;
 char *ruleset = NULL;
+int density = 50;
 
 Pixmap pixmap;
 GC alive_gc;
@@ -84,7 +85,11 @@ int main(int argc, char **argv)
 		 "\t\t\t\tflock, fredkin, highlife, life without death,\n"
 		 "\t\t\t\tlive free or die, maze, mazectric, move,\n"
 		 "\t\t\t\treplicator, seeds)",
-		 DOString, False, {&ruleset}}
+		 DOString, False, {&ruleset}},
+		{NULL, "--density",
+		 "percentage of live cells in initial random grid\n"
+		 "\t\t\t\t(default: 50)",
+		 DONatural, False, {&density}}
 	};
 
 	srand(time(NULL));
@@ -94,7 +99,7 @@ int main(int argc, char **argv)
 				      NULL, NULL, NULL, NULL,
 				      increment_gen};
 
-	DAParseArguments(argc, argv, options, 4,
+	DAParseArguments(argc, argv, options, 5,
 			 "Window Maker dockapp for displaying cellular "
 			 "automata",
 			 PACKAGE_STRING);
@@ -198,7 +203,10 @@ void randomize_grid(int button, int state, int x, int y)
 	int i,j;
 	for (i = 0; i < GRID_WIDTH; i++) {
 		for (j = 0; j < GRID_HEIGHT; j++) {
-			current_gen[i][j] = rand() % 2;
+			if (rand() % 100 <= density)
+				current_gen[i][j] = 1;
+			else
+				current_gen[i][j] = 0;
 		}
 	}
 	draw_grid();
