@@ -18,6 +18,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <libdockapp/dockapp.h>
 
@@ -54,6 +55,7 @@ int survival_mask = DEFAULT_SURVIVAL_MASK;
 char *alive_color = DEFAULT_ALIVE_COLOR;
 char *dead_color = DEFAULT_DEAD_COLOR;
 int generation_time = DEFAULT_GENERATION_TIME;
+char *ruleset = NULL;
 
 Pixmap pixmap;
 GC alive_gc;
@@ -62,6 +64,7 @@ GC dead_gc;
 void draw_grid(void);
 void increment_gen(void);
 void randomize_grid(int button, int state, int x, int y);
+void set_ruleset_masks(char *ruleset);
 
 int main(int argc, char **argv)
 {
@@ -75,7 +78,13 @@ int main(int argc, char **argv)
 		 DOString, False, {&dead_color}},
 		{"-t", "--time",
 		 "time in ms between generations (default: 250)",
-		 DONatural, False, {&generation_time}}
+		 DONatural, False, {&generation_time}},
+		{"-r", "--ruleset",
+		 "select ruleset (life (default), 2x2, day & night,\n"
+		 "\t\t\t\tflock, fredkin, highlife, life without death,\n"
+		 "\t\t\t\tlive free or die, maze, mazectric, move,\n"
+		 "\t\t\t\treplicator, seeds)",
+		 DOString, False, {&ruleset}}
 	};
 
 	srand(time(NULL));
@@ -85,7 +94,7 @@ int main(int argc, char **argv)
 				      NULL, NULL, NULL, NULL,
 				      increment_gen};
 
-	DAParseArguments(argc, argv, options, 3,
+	DAParseArguments(argc, argv, options, 4,
 			 "Window Maker dockapp for displaying cellular "
 			 "automaton",
 			 PACKAGE_STRING);
@@ -100,6 +109,9 @@ int main(int argc, char **argv)
 
 	values.foreground = DAGetColor(dead_color);
 	dead_gc = XCreateGC(DADisplay, pixmap, GCForeground, &values);
+
+	if (ruleset)
+		set_ruleset_masks(ruleset);
 
 	randomize_grid(0, 0, 0, 0);
 
@@ -190,4 +202,52 @@ void randomize_grid(int button, int state, int x, int y)
 		}
 	}
 	draw_grid();
+}
+
+void set_ruleset_masks(char *ruleset)
+{
+	if (strcmp(ruleset, "life") == 0) {
+		/* default masks already set */
+	} else if (strcmp(ruleset, "2x2") == 0) {
+		birth_mask =  BS_THREE | BS_SIX;
+		survival_mask = BS_ONE | BS_TWO | BS_FIVE;
+	} else if (strcmp(ruleset, "day & night") == 0) {
+		birth_mask =  BS_THREE | BS_SIX | BS_SEVEN | BS_EIGHT;
+		survival_mask = BS_THREE | BS_FOUR | BS_SIX | BS_SEVEN |
+			BS_EIGHT;
+	} else if (strcmp(ruleset, "flock") == 0) {
+		birth_mask =  BS_THREE;
+		survival_mask = BS_ONE | BS_TWO;
+	} else if (strcmp(ruleset, "fredkin") == 0) {
+		birth_mask =  BS_ONE | BS_THREE | BS_FIVE | BS_SEVEN;
+		survival_mask = BS_ZERO | BS_TWO | BS_FOUR | BS_SIX | BS_EIGHT;
+	} else if (strcmp(ruleset, "highlife") == 0) {
+		birth_mask =  BS_THREE | BS_SIX;
+		survival_mask = BS_TWO | BS_THREE;
+	} else if (strcmp(ruleset, "life without death") == 0) {
+		birth_mask =  BS_THREE;
+		survival_mask = BS_ZERO | BS_ONE | BS_TWO | BS_THREE | BS_FOUR |
+			BS_FIVE | BS_SIX | BS_SEVEN | BS_EIGHT;
+	} else if (strcmp(ruleset, "live free or die") == 0) {
+		birth_mask =  BS_TWO;
+		survival_mask = BS_ZERO;
+	} else if (strcmp(ruleset, "maze") == 0) {
+		birth_mask =  BS_THREE;
+		survival_mask = BS_ONE | BS_TWO | BS_THREE | BS_FOUR | BS_FIVE;
+	} else if (strcmp(ruleset, "mazectric") == 0) {
+		birth_mask =  BS_THREE;
+		survival_mask = BS_ONE | BS_TWO | BS_THREE | BS_FOUR;
+	} else if (strcmp(ruleset, "move") == 0) {
+		birth_mask =  BS_THREE | BS_SIX | BS_EIGHT;
+		survival_mask = BS_TWO | BS_FOUR | BS_FIVE;
+	} else if (strcmp(ruleset, "replicator") == 0) {
+		birth_mask =  BS_ONE | BS_THREE | BS_FIVE | BS_SEVEN;
+		survival_mask = BS_ONE | BS_THREE | BS_FIVE | BS_SEVEN;
+	} else if (strcmp(ruleset, "seeds") == 0) {
+		birth_mask =  BS_TWO;
+		survival_mask = 0;
+	} else {
+		DAWarning("unknown ruleset '%s', defaulting to 'life'",
+			  ruleset);
+	}
 }
