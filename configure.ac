@@ -1,4 +1,4 @@
-AC_INIT([wmautocell], [0.1], [dtorrance@piedmont.edu])
+AC_INIT([wmcellauto], [0.1], [dtorrance@piedmont.edu])
 AM_INIT_AUTOMAKE([foreign])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_PROG_CC
