@@ -49,6 +49,9 @@ int current_gen[GRID_WIDTH][GRID_HEIGHT];
 int next_gen[GRID_WIDTH][GRID_HEIGHT];
 int birth_mask = DEFAULT_BIRTH_MASK;
 int survival_mask = DEFAULT_SURVIVAL_MASK;
+
+char *alive_color = DEFAULT_ALIVE_COLOR;
+char *dead_color = DEFAULT_DEAD_COLOR;
 Pixmap pixmap;
 GC alive_gc;
 GC dead_gc;
@@ -60,6 +63,14 @@ void randomize_grid(int button, int state, int x, int y);
 int main(int argc, char **argv)
 {
 	XGCValues values;
+	DAProgramOption options[] = {
+		{"-a", "--alivecolor",
+		 "color of live cells (default: light sea green)",
+		 DOString, False, {&alive_color}},
+		{"-d", "--deadcolor",
+		 "color of dead cells (default: black)",
+		 DOString, False, {&dead_color}}
+	};
 
 	srand(time(NULL));
 
@@ -68,7 +79,7 @@ int main(int argc, char **argv)
 				      NULL, NULL, NULL, NULL,
 				      increment_gen};
 
-	DAParseArguments(argc, argv, NULL, 0,
+	DAParseArguments(argc, argv, options, 2,
 			 "Window Maker dockapp for displaying cellular "
 			 "automaton",
 			 PACKAGE_STRING);
@@ -78,10 +89,10 @@ int main(int argc, char **argv)
 
 	pixmap = DAMakePixmap();
 
-	values.foreground = DAGetColor(DEFAULT_ALIVE_COLOR);
+	values.foreground = DAGetColor(alive_color);
 	alive_gc = XCreateGC(DADisplay, pixmap, GCForeground, &values);
 
-	values.foreground = DAGetColor(DEFAULT_DEAD_COLOR);
+	values.foreground = DAGetColor(dead_color);
 	dead_gc = XCreateGC(DADisplay, pixmap, GCForeground, &values);
 
 	randomize_grid(0, 0, 0, 0);
