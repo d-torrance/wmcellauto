@@ -49,8 +49,12 @@ enum {
 
 int current_gen[GRID_WIDTH][GRID_HEIGHT];
 int next_gen[GRID_WIDTH][GRID_HEIGHT];
+
 int birth_mask = DEFAULT_BIRTH_MASK;
 int survival_mask = DEFAULT_SURVIVAL_MASK;
+
+char *birth_str = NULL;
+char *survival_str = NULL;
 
 char *alive_color = DEFAULT_ALIVE_COLOR;
 char *dead_color = DEFAULT_DEAD_COLOR;
@@ -66,6 +70,7 @@ void draw_grid(void);
 void increment_gen(void);
 void randomize_grid(int button, int state, int x, int y);
 void set_ruleset_masks(char *ruleset);
+int str_to_mask(char *string);
 
 int main(int argc, char **argv)
 {
@@ -80,6 +85,14 @@ int main(int argc, char **argv)
 		{"-t", "--time",
 		 "time in ms between generations (default: 250)",
 		 DONatural, False, {&generation_time}},
+		{"-b", "--birth",
+		 "custom ruleset - specify number of adjacent cells\n"
+		 "\t\t\t\trequired for birth (default: 3)",
+		 DOString, False, {&birth_str}},
+		{"-s", "--survival",
+		 "custom ruleset - specify number of adjacent cells\n"
+		 "\t\t\t\trequired for survival (default: 23)",
+		 DOString, False, {&survival_str}},
 		{"-r", "--ruleset",
 		 "select ruleset (life (default), 2x2, day & night,\n"
 		 "\t\t\t\tflock, fredkin, highlife, life without death,\n"
@@ -99,7 +112,7 @@ int main(int argc, char **argv)
 				      NULL, NULL, NULL, NULL,
 				      increment_gen};
 
-	DAParseArguments(argc, argv, options, 5,
+	DAParseArguments(argc, argv, options, 7,
 			 "Window Maker dockapp for displaying cellular "
 			 "automata",
 			 PACKAGE_STRING);
@@ -117,6 +130,11 @@ int main(int argc, char **argv)
 
 	if (ruleset)
 		set_ruleset_masks(ruleset);
+
+	if (birth_str)
+		birth_mask = str_to_mask(birth_str);
+	if (survival_str)
+		survival_mask = str_to_mask(survival_str);
 
 	randomize_grid(0, 0, 0, 0);
 
@@ -258,4 +276,22 @@ void set_ruleset_masks(char *ruleset)
 		DAWarning("unknown ruleset '%s', defaulting to 'life'",
 			  ruleset);
 	}
+}
+
+int str_to_mask(char *string)
+{
+	int i, num, mask;
+
+	mask = 0;
+	i = 0;
+	while (string[i]) {
+		num = string[i] - '0';
+		if (num < 0 || num > 8)
+			DAWarning("'%c' not a number between 0 and 8, ignoring",
+				  string[i]);
+		else
+			mask |= 1 << num;
+		i++;
+	}
+	return mask;
 }
