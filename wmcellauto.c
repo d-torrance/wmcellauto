@@ -55,7 +55,7 @@ GC dead_gc;
 
 void draw_grid(void);
 void increment_gen(void);
-void randomize_grid(void);
+void randomize_grid(int button, int state, int x, int y);
 
 int main(int argc, char **argv)
 {
@@ -63,7 +63,9 @@ int main(int argc, char **argv)
 
 	srand(time(NULL));
 
-	DACallbacks eventCallbacks = {NULL, NULL, NULL, NULL, NULL, NULL,
+	DACallbacks eventCallbacks = {NULL,
+				      randomize_grid,
+				      NULL, NULL, NULL, NULL,
 				      increment_gen};
 
 	DAParseArguments(argc, argv, NULL, 0,
@@ -82,7 +84,7 @@ int main(int argc, char **argv)
 	values.foreground = DAGetColor(DEFAULT_DEAD_COLOR);
 	dead_gc = XCreateGC(DADisplay, pixmap, GCForeground, &values);
 
-	randomize_grid();
+	randomize_grid(0, 0, 0, 0);
 
 	DASetTimeout(250);
 	DAShow();
@@ -162,7 +164,7 @@ void increment_gen(void)
 	draw_grid();
 }
 
-void randomize_grid(void)
+void randomize_grid(int button, int state, int x, int y)
 {
 	int i,j;
 	for (i = 0; i < GRID_WIDTH; i++) {
