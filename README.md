@@ -37,6 +37,9 @@ Then the usual
                                  replicator, seeds)
     --density <number>           percentage of live cells in initial random grid
                                  (default: 50)
+    -R, --reset <integer>        number of generations until grid resets
+                                 (default: 100)
+
 
 # Bugs
 

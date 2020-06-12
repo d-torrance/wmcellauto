@@ -31,6 +31,7 @@
 #define DEFAULT_ALIVE_COLOR "light sea green"
 #define DEFAULT_DEAD_COLOR "black"
 #define DEFAULT_GENERATION_TIME 250
+#define DEFAULT_RESET 100
 
 enum {
 	BS_ZERO = 1 << 0,
@@ -49,6 +50,9 @@ enum {
 
 int current_gen[GRID_WIDTH][GRID_HEIGHT];
 int next_gen[GRID_WIDTH][GRID_HEIGHT];
+
+int gen_count = 0;
+int reset = DEFAULT_RESET;
 
 int birth_mask = DEFAULT_BIRTH_MASK;
 int survival_mask = DEFAULT_SURVIVAL_MASK;
@@ -102,7 +106,11 @@ int main(int argc, char **argv)
 		{NULL, "--density",
 		 "percentage of live cells in initial random grid\n"
 		 "\t\t\t\t(default: 50)",
-		 DONatural, False, {&density}}
+		 DONatural, False, {&density}},
+		{"-R", "--reset",
+		 "number of generations until grid resets\n"
+		 "\t\t\t\t(default: 100)",
+		 DOInteger, False, {&reset}}
 	};
 
 	srand(time(NULL));
@@ -112,7 +120,7 @@ int main(int argc, char **argv)
 				      NULL, NULL, NULL, NULL,
 				      increment_gen};
 
-	DAParseArguments(argc, argv, options, 7,
+	DAParseArguments(argc, argv, options, 8,
 			 "Window Maker dockapp for displaying cellular "
 			 "automata",
 			 PACKAGE_STRING);
@@ -214,6 +222,9 @@ void increment_gen(void)
 		}
 	}
 	draw_grid();
+	gen_count++;
+	if (gen_count == reset)
+		randomize_grid(0, 0, 0, 0);
 }
 
 void randomize_grid(int button, int state, int x, int y)
@@ -228,6 +239,7 @@ void randomize_grid(int button, int state, int x, int y)
 		}
 	}
 	draw_grid();
+	gen_count = 0;
 }
 
 void set_ruleset_masks(char *ruleset)
