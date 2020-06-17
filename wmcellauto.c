@@ -31,7 +31,7 @@
 #define DEFAULT_ALIVE_COLOR "light sea green"
 #define DEFAULT_DEAD_COLOR "black"
 #define DEFAULT_GENERATION_TIME 250
-#define DEFAULT_RESET 100
+#define DEFAULT_RESET -1
 
 enum {
 	BS_ZERO = 1 << 0,
@@ -109,7 +109,7 @@ int main(int argc, char **argv)
 		 DONatural, False, {&density}},
 		{"-R", "--reset",
 		 "number of generations until grid resets\n"
-		 "\t\t\t\t(default: 100)",
+		 "\t\t\t\t(default: -1, i.e., don't reset)",
 		 DOInteger, False, {&reset}}
 	};
 

@@ -38,7 +38,7 @@ Then the usual
     --density <number>           percentage of live cells in initial random grid
                                  (default: 50)
     -R, --reset <integer>        number of generations until grid resets
-                                 (default: 100)
+                                 (default: -1, i.e., don't reset)
 
 
 # Bugs
